@@ -1,0 +1,52 @@
+{
+  "name": "chatgpt-5-app-generator",
+  "version": "1.0.0",
+  "description": "A powerful web application that generates complete, production-ready applications based on your descriptions",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx http-server -p 8000",
+    "dev": "npx live-server --port=8000",
+    "build": "echo 'Static site - no build required'",
+    "test": "echo 'No tests specified'"
+  },
+  "keywords": [
+    "app-generator",
+    "code-generation",
+    "web-development",
+    "mobile-development",
+    "desktop-apps",
+    "api-generation",
+    "game-development",
+    "tool-generation",
+    "react",
+    "vue",
+    "angular",
+    "nodejs",
+    "python",
+    "flutter",
+    "electron"
+  ],
+  "author": "ChatGPT 5 App Generator",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/chatgpt-5-app-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/chatgpt-5-app-generator/issues"
+  },
+  "homepage": "https://github.com/yourusername/chatgpt-5-app-generator#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "live-server": "^1.2.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ]
+}
