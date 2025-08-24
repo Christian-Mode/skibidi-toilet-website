@@ -130,6 +130,107 @@ class AppGenerator {
 
     generateProjectStructure(appType, techStack) {
         const structures = {
+            '3dgame': {
+                unity: `My3DGame/
+├── Assets/
+│   ├── Scripts/
+│   │   ├── Player/
+│   │   │   ├── PlayerController.cs
+│   │   │   ├── PlayerMovement.cs
+│   │   │   └── PlayerHealth.cs
+│   │   ├── Game/
+│   │   │   ├── GameManager.cs
+│   │   │   ├── LevelManager.cs
+│   │   │   └── UIManager.cs
+│   │   ├── Vehicles/
+│   │   │   ├── VehicleController.cs
+│   │   │   └── VehiclePhysics.cs
+│   │   ├── AI/
+│   │   │   ├── NPCController.cs
+│   │   │   └── TrafficAI.cs
+│   │   └── Weapons/
+│   │       ├── WeaponSystem.cs
+│   │       └── Projectile.cs
+│   ├── Prefabs/
+│   │   ├── Player.prefab
+│   │   ├── Vehicle.prefab
+│   │   └── NPC.prefab
+│   ├── Scenes/
+│   │   ├── MainMenu.unity
+│   │   ├── GameWorld.unity
+│   │   └── Loading.unity
+│   ├── Materials/
+│   ├── Textures/
+│   └── Models/
+├── ProjectSettings/
+├── Packages/
+└── README.md`,
+                unreal: `My3DGame/
+├── Content/
+│   ├── Blueprints/
+│   │   ├── Characters/
+│   │   │   ├── BP_PlayerCharacter.uasset
+│   │   │   └── BP_NPCCharacter.uasset
+│   │   ├── Vehicles/
+│   │   │   └── BP_Vehicle.uasset
+│   │   ├── Weapons/
+│   │   │   └── BP_Weapon.uasset
+│   │   └── Game/
+│   │       ├── BP_GameMode.uasset
+│   │       └── BP_GameState.uasset
+│   ├── Maps/
+│   │   ├── MainMenu.umap
+│   │   └── GameWorld.umap
+│   ├── Materials/
+│   ├── Textures/
+│   ├── StaticMeshes/
+│   └── SkeletalMeshes/
+├── Source/
+│   └── My3DGame/
+│       ├── My3DGame.Build.cs
+│       ├── My3DGame.cpp
+│       └── My3DGame.h
+├── Config/
+└── README.md`,
+                threejs: `my-3d-game/
+├── public/
+│   ├── index.html
+│   └── favicon.ico
+├── src/
+│   ├── components/
+│   │   ├── Game/
+│   │   │   ├── GameEngine.js
+│   │   │   ├── SceneManager.js
+│   │   │   └── GameLoop.js
+│   │   ├── World/
+│   │   │   ├── World.js
+│   │   │   ├── Terrain.js
+│   │   │   └── Buildings.js
+│   │   ├── Characters/
+│   │   │   ├── Player.js
+│   │   │   ├── NPC.js
+│   │   │   └── CharacterController.js
+│   │   ├── Vehicles/
+│   │   │   ├── Vehicle.js
+│   │   │   └── VehicleController.js
+│   │   ├── Physics/
+│   │   │   ├── PhysicsEngine.js
+│   │   │   └── Collision.js
+│   │   └── UI/
+│   │       ├── HUD.js
+│   │       └── Menu.js
+│   ├── utils/
+│   │   ├── Loader.js
+│   │   └── Math.js
+│   ├── App.js
+│   ├── index.js
+│   └── package.json
+├── assets/
+│   ├── models/
+│   ├── textures/
+│   └── sounds/
+└── README.md`
+            },
             web: {
                 react: `my-app/
 ├── public/
@@ -319,6 +420,284 @@ class _MyHomePageState extends State<MyHomePage> {
 }`;
         }
 
+        if (appType === '3dgame' && primaryTech === 'unity') {
+            return `using UnityEngine;
+using UnityEngine.UI;
+
+public class PlayerController : MonoBehaviour
+{
+    [Header("Movement Settings")]
+    public float moveSpeed = 5f;
+    public float rotationSpeed = 100f;
+    public float jumpForce = 5f;
+    
+    [Header("Components")]
+    public CharacterController characterController;
+    public Camera playerCamera;
+    public Transform groundCheck;
+    
+    private Vector3 moveDirection;
+    private float verticalVelocity;
+    private bool isGrounded;
+    
+    void Start()
+    {
+        // Lock cursor to center of screen
+        Cursor.lockState = CursorLockMode.Locked;
+        
+        // Get components if not assigned
+        if (characterController == null)
+            characterController = GetComponent<CharacterController>();
+        if (playerCamera == null)
+            playerCamera = Camera.main;
+    }
+    
+    void Update()
+    {
+        HandleMovement();
+        HandleMouseLook();
+        HandleJump();
+    }
+    
+    void HandleMovement()
+    {
+        // Get input
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        
+        // Calculate movement direction
+        Vector3 forward = transform.forward * vertical;
+        Vector3 right = transform.right * horizontal;
+        moveDirection = (forward + right).normalized;
+        
+        // Apply movement
+        characterController.Move(moveDirection * moveSpeed * Time.deltaTime);
+    }
+    
+    void HandleMouseLook()
+    {
+        float mouseX = Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * rotationSpeed * Time.deltaTime;
+        
+        // Rotate player left/right
+        transform.Rotate(Vector3.up * mouseX);
+        
+        // Rotate camera up/down
+        playerCamera.transform.Rotate(Vector3.left * mouseY);
+        
+        // Clamp camera rotation
+        Vector3 cameraRotation = playerCamera.transform.eulerAngles;
+        if (cameraRotation.x > 180f)
+            cameraRotation.x -= 360f;
+        cameraRotation.x = Mathf.Clamp(cameraRotation.x, -80f, 80f);
+        playerCamera.transform.eulerAngles = cameraRotation;
+    }
+    
+    void HandleJump()
+    {
+        // Check if grounded
+        isGrounded = Physics.CheckSphere(groundCheck.position, 0.1f, LayerMask.GetMask("Ground"));
+        
+        if (isGrounded && verticalVelocity < 0)
+        {
+            verticalVelocity = -2f;
+        }
+        
+        // Jump input
+        if (Input.GetButtonDown("Jump") && isGrounded)
+        {
+            verticalVelocity = jumpForce;
+        }
+        
+        // Apply gravity
+        verticalVelocity += Physics.gravity.y * Time.deltaTime;
+        
+        // Apply vertical movement
+        Vector3 verticalMovement = Vector3.up * verticalVelocity * Time.deltaTime;
+        characterController.Move(verticalMovement);
+    }
+}`;
+        }
+        
+        if (appType === '3dgame' && primaryTech === 'threejs') {
+            return `import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
+class GameEngine {
+    constructor() {
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.renderer = new THREE.WebGLRenderer({ antialias: true });
+        this.clock = new THREE.Clock();
+        this.player = null;
+        this.vehicles = [];
+        this.npcs = [];
+        
+        this.init();
+    }
+    
+    init() {
+        // Setup renderer
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.body.appendChild(this.renderer.domElement);
+        
+        // Setup scene
+        this.setupScene();
+        this.setupLighting();
+        this.setupPlayer();
+        this.setupWorld();
+        this.setupControls();
+        
+        // Start game loop
+        this.animate();
+    }
+    
+    setupScene() {
+        // Background
+        this.scene.background = new THREE.Color(0x87CEEB); // Sky blue
+        
+        // Fog for atmosphere
+        this.scene.fog = new THREE.Fog(0x87CEEB, 100, 500);
+    }
+    
+    setupLighting() {
+        // Ambient light
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+        this.scene.add(ambientLight);
+        
+        // Directional light (sun)
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(50, 100, 50);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.width = 2048;
+        directionalLight.shadow.mapSize.height = 2048;
+        this.scene.add(directionalLight);
+    }
+    
+    setupPlayer() {
+        // Create player character
+        const geometry = new THREE.CapsuleGeometry(1, 2, 4, 8);
+        const material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
+        this.player = new THREE.Mesh(geometry, material);
+        this.player.position.set(0, 1, 0);
+        this.player.castShadow = true;
+        this.scene.add(this.player);
+        
+        // Position camera behind player
+        this.camera.position.set(0, 3, 5);
+        this.camera.lookAt(this.player.position);
+    }
+    
+    setupWorld() {
+        // Ground
+        const groundGeometry = new THREE.PlaneGeometry(1000, 1000);
+        const groundMaterial = new THREE.MeshLambertMaterial({ color: 0x90EE90 });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.receiveShadow = true;
+        this.scene.add(ground);
+        
+        // Buildings
+        this.createBuildings();
+        
+        // Roads
+        this.createRoads();
+    }
+    
+    createBuildings() {
+        for (let i = 0; i < 20; i++) {
+            const height = Math.random() * 20 + 10;
+            const geometry = new THREE.BoxGeometry(10, height, 10);
+            const material = new THREE.MeshLambertMaterial({ 
+                color: Math.random() * 0xffffff 
+            });
+            const building = new THREE.Mesh(geometry, material);
+            
+            building.position.set(
+                (Math.random() - 0.5) * 200,
+                height / 2,
+                (Math.random() - 0.5) * 200
+            );
+            building.castShadow = true;
+            building.receiveShadow = true;
+            this.scene.add(building);
+        }
+    }
+    
+    createRoads() {
+        // Main road
+        const roadGeometry = new THREE.PlaneGeometry(1000, 20);
+        const roadMaterial = new THREE.MeshLambertMaterial({ color: 0x333333 });
+        const road = new THREE.Mesh(roadGeometry, roadMaterial);
+        road.rotation.x = -Math.PI / 2;
+        road.position.y = 0.01;
+        this.scene.add(road);
+    }
+    
+    setupControls() {
+        // Keyboard controls
+        this.keys = {};
+        document.addEventListener('keydown', (e) => this.keys[e.code] = true);
+        document.addEventListener('keyup', (e) => this.keys[e.code] = false);
+        
+        // Mouse controls
+        document.addEventListener('mousemove', (e) => {
+            if (document.pointerLockElement === this.renderer.domElement) {
+                this.player.rotation.y -= e.movementX * 0.002;
+                this.camera.rotation.x -= e.movementY * 0.002;
+                this.camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, this.camera.rotation.x));
+            }
+        });
+        
+        // Click to lock pointer
+        this.renderer.domElement.addEventListener('click', () => {
+            this.renderer.domElement.requestPointerLock();
+        });
+    }
+    
+    updatePlayer() {
+        const delta = this.clock.getDelta();
+        const speed = 10;
+        
+        // Movement
+        if (this.keys['KeyW']) {
+            this.player.position.z -= Math.cos(this.player.rotation.y) * speed * delta;
+            this.player.position.x -= Math.sin(this.player.rotation.y) * speed * delta;
+        }
+        if (this.keys['KeyS']) {
+            this.player.position.z += Math.cos(this.player.rotation.y) * speed * delta;
+            this.player.position.x += Math.sin(this.player.rotation.y) * speed * delta;
+        }
+        if (this.keys['KeyA']) {
+            this.player.position.x -= Math.cos(this.player.rotation.y) * speed * delta;
+            this.player.position.z += Math.sin(this.player.rotation.y) * speed * delta;
+        }
+        if (this.keys['KeyD']) {
+            this.player.position.x += Math.cos(this.player.rotation.y) * speed * delta;
+            this.player.position.z -= Math.sin(this.player.rotation.y) * speed * delta;
+        }
+        
+        // Update camera position
+        const cameraOffset = new THREE.Vector3(0, 3, 5);
+        cameraOffset.applyQuaternion(this.player.quaternion);
+        this.camera.position.copy(this.player.position).add(cameraOffset);
+        this.camera.lookAt(this.player.position);
+    }
+    
+    animate() {
+        requestAnimationFrame(() => this.animate());
+        
+        this.updatePlayer();
+        this.renderer.render(this.scene, this.camera);
+    }
+}
+
+// Initialize game
+const game = new GameEngine();`;
+        }
+        
         if (appType === 'api' && primaryTech === 'node') {
             return `const express = require('express');
 const cors = require('cors');
@@ -451,7 +830,71 @@ fastapi==0.104.0
 uvicorn==0.24.0
 pydantic==2.4.0
 python-dotenv==1.0.0
-requests==2.31.0`
+requests==2.31.0`,
+            unity: `# Unity Project Dependencies
+# Install via Unity Package Manager:
+# - Input System (for modern input handling)
+# - Universal Render Pipeline (for better graphics)
+# - ProBuilder (for level design)
+# - Cinemachine (for camera systems)
+# - NavMeshComponents (for AI navigation)
+# - TextMeshPro (for UI text)
+# - Post Processing (for visual effects)
+
+# Core Unity Version: 2022.3 LTS or newer
+# Platform: PC, Mac, Linux, Android, iOS, Xbox, PlayStation`,
+            unreal: `# Unreal Engine Project Dependencies
+# Install via Epic Games Launcher:
+# - Unreal Engine 5.3 or newer
+# - Visual Studio 2022 (for C++ development)
+# - DirectX 12 support
+# - Vulkan support (optional)
+
+# Core Engine Features:
+# - Nanite (virtualized geometry)
+# - Lumen (global illumination)
+# - Niagara (particle systems)
+# - Chaos (physics simulation)`,
+            threejs: `{
+  "name": "${this.appName.value.toLowerCase().replace(/\s+/g, '-')}",
+  "version": "1.0.0",
+  "description": "${this.appDescription.value}",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "dev": "vite --host"
+  },
+  "dependencies": {
+    "three": "^0.158.0",
+    "three-stdlib": "^2.28.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "@vitejs/plugin-react": "^4.2.0"
+  }
+}`,
+            babylon: `{
+  "name": "${this.appName.value.toLowerCase().replace(/\s+/g, '-')}",
+  "version": "1.0.0",
+  "description": "${this.appDescription.value}",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@babylonjs/core": "^6.0.0",
+    "@babylonjs/gui": "^6.0.0",
+    "@babylonjs/loaders": "^6.0.0",
+    "@babylonjs/materials": "^6.0.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}`
         };
 
         const primaryTech = techStack[0];
@@ -495,6 +938,62 @@ requests==2.31.0`
                     <li><strong>Start the server:</strong> <code>npm start</code></li>
                 </ol>
                 <p><strong>Note:</strong> The API will be available at <code>http://localhost:3000</code></p>`;
+        } else if (appType === '3dgame' && primaryTech === 'unity') {
+            instructions += `
+                <ol>
+                    <li><strong>Prerequisites:</strong> Download and install Unity Hub from <a href="https://unity.com/download" target="_blank">unity.com</a></li>
+                    <li><strong>Install Unity:</strong> Use Unity Hub to install Unity 2022.3 LTS or newer</li>
+                    <li><strong>Create Project:</strong> Open Unity Hub → New Project → 3D Core</li>
+                    <li><strong>Import Assets:</strong> Copy the generated scripts to Assets/Scripts folder</li>
+                    <li><strong>Setup Scene:</strong> Create a new scene and add a ground plane with "Ground" layer</li>
+                    <li><strong>Add Player:</strong> Create an empty GameObject and attach PlayerController script</li>
+                    <li><strong>Add Camera:</strong> Create a camera and assign it to PlayerController</li>
+                    <li><strong>Test:</strong> Press Play and use WASD to move, mouse to look around</li>
+                </ol>
+                <p><strong>Controls:</strong> WASD to move, Mouse to look, Space to jump</p>
+                <p><strong>Next Steps:</strong> Add vehicles, NPCs, weapons, and expand the world!</p>`;
+        } else if (appType === '3dgame' && primaryTech === 'unreal') {
+            instructions += `
+                <ol>
+                    <li><strong>Prerequisites:</strong> Download Epic Games Launcher and Unreal Engine 5.3+</li>
+                    <li><strong>Create Project:</strong> Open Epic Launcher → Unreal Engine → New Project → Games → Blank</li>
+                    <li><strong>Setup C++:</strong> Choose C++ project for full code access</li>
+                    <li><strong>Import Blueprints:</strong> Create Blueprint classes based on the generated structure</li>
+                    <li><strong>Setup Character:</strong> Create a Character Blueprint with movement and camera components</li>
+                    <li><strong>Add Vehicles:</strong> Create Vehicle Blueprint with physics and controls</li>
+                    <li><strong>Build World:</strong> Use the level editor to create your game world</li>
+                    <li><strong>Test:</strong> Press Play and explore your 3D world</li>
+                </ol>
+                <p><strong>Features:</strong> Nanite geometry, Lumen lighting, Chaos physics, Niagara particles</p>
+                <p><strong>Next Steps:</strong> Add AI, multiplayer, and advanced graphics features!</p>`;
+        } else if (appType === '3dgame' && primaryTech === 'threejs') {
+            instructions += `
+                <ol>
+                    <li><strong>Prerequisites:</strong> Make sure you have Node.js installed (version 16 or higher)</li>
+                    <li><strong>Create Project:</strong> <code>mkdir ${this.appName.value.toLowerCase().replace(/\s+/g, '-')}</code></li>
+                    <li><strong>Navigate to Project:</strong> <code>cd ${this.appName.value.toLowerCase().replace(/\s+/g, '-')}</code></li>
+                    <li><strong>Initialize:</strong> <code>npm init -y</code></li>
+                    <li><strong>Install Dependencies:</strong> <code>npm install</code></li>
+                    <li><strong>Start Development:</strong> <code>npm run dev</code></li>
+                    <li><strong>Open Browser:</strong> Navigate to <code>http://localhost:5173</code></li>
+                    <li><strong>Test Controls:</strong> Click to lock mouse, WASD to move, mouse to look</li>
+                </ol>
+                <p><strong>Controls:</strong> Click to lock mouse, WASD to move, Mouse to look around</p>
+                <p><strong>Next Steps:</strong> Add more buildings, vehicles, NPCs, and game mechanics!</p>`;
+        } else if (appType === '3dgame' && primaryTech === 'babylon') {
+            instructions += `
+                <ol>
+                    <li><strong>Prerequisites:</strong> Make sure you have Node.js installed (version 16 or higher)</li>
+                    <li><strong>Create Project:</strong> <code>mkdir ${this.appName.value.toLowerCase().replace(/\s+/g, '-')}</code></li>
+                    <li><strong>Navigate to Project:</strong> <code>cd ${this.appName.value.toLowerCase().replace(/\s+/g, '-')}</code></li>
+                    <li><strong>Initialize:</strong> <code>npm init -y</code></li>
+                    <li><strong>Install Dependencies:</strong> <code>npm install</code></li>
+                    <li><strong>Start Development:</strong> <code>npm run dev</code></li>
+                    <li><strong>Open Browser:</strong> Navigate to <code>http://localhost:5173</code></li>
+                    <li><strong>Test Controls:</strong> Use the generated 3D scene and controls</li>
+                </ol>
+                <p><strong>Features:</strong> Advanced 3D graphics, physics, materials, and effects</p>
+                <p><strong>Next Steps:</strong> Expand the world, add game mechanics, and enhance graphics!</p>`;
         } else {
             instructions += `
                 <p>Setup instructions will be generated based on your specific app type and technology stack.</p>
