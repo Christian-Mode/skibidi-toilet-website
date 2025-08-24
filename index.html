@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT 5 App Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+                <h1>ChatGPT 5 App Generator</h1>
+            </div>
+            <p class="subtitle">Transform your ideas into fully functional applications</p>
+        </header>
+
+        <main class="main-content">
+            <div class="generator-section">
+                <div class="input-section">
+                    <h2>Describe Your App</h2>
+                    <div class="app-type-selector">
+                        <label for="appType">App Type:</label>
+                        <select id="appType">
+                            <option value="web">Web Application</option>
+                            <option value="mobile">Mobile App</option>
+                            <option value="desktop">Desktop Application</option>
+                            <option value="api">API/Backend</option>
+                            <option value="game">Game</option>
+                            <option value="tool">Utility Tool</option>
+                        </select>
+                    </div>
+                    
+                    <div class="tech-stack-selector">
+                        <label>Technology Stack:</label>
+                        <div class="tech-options">
+                            <label class="tech-option">
+                                <input type="checkbox" value="react" checked>
+                                <span>React</span>
+                            </label>
+                            <label class="tech-option">
+                                <input type="checkbox" value="vue">
+                                <span>Vue.js</span>
+                            </label>
+                            <label class="tech-option">
+                                <input type="checkbox" value="angular">
+                                <span>Angular</span>
+                            </label>
+                            <label class="tech-option">
+                                <input type="checkbox" value="node">
+                                <span>Node.js</span>
+                            </label>
+                            <label class="tech-option">
+                                <input type="checkbox" value="python">
+                                <span>Python</span>
+                            </label>
+                            <label class="tech-option">
+                                <input type="checkbox" value="flutter">
+                                <span>Flutter</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="description-input">
+                        <label for="appDescription">App Description:</label>
+                        <textarea 
+                            id="appDescription" 
+                            placeholder="Describe your app in detail. Include features, functionality, target users, and any specific requirements..."
+                            rows="6"
+                        ></textarea>
+                    </div>
+
+                    <div class="additional-options">
+                        <label for="appName">App Name:</label>
+                        <input type="text" id="appName" placeholder="Enter your app name">
+                        
+                        <label for="appCategory">Category:</label>
+                        <select id="appCategory">
+                            <option value="productivity">Productivity</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="education">Education</option>
+                            <option value="business">Business</option>
+                            <option value="social">Social</option>
+                            <option value="utility">Utility</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <button id="generateBtn" class="generate-btn">
+                        <i class="fas fa-magic"></i>
+                        Generate App
+                    </button>
+                </div>
+
+                <div class="output-section" id="outputSection" style="display: none;">
+                    <h2>Generated App</h2>
+                    <div class="app-preview">
+                        <div class="app-header">
+                            <h3 id="generatedAppName">App Name</h3>
+                            <div class="app-meta">
+                                <span class="app-type" id="generatedAppType">Web App</span>
+                                <span class="app-category" id="generatedAppCategory">Productivity</span>
+                            </div>
+                        </div>
+                        
+                        <div class="code-tabs">
+                            <div class="tab-buttons">
+                                <button class="tab-btn active" data-tab="structure">Project Structure</button>
+                                <button class="tab-btn" data-tab="main">Main Code</button>
+                                <button class="tab-btn" data-tab="dependencies">Dependencies</button>
+                                <button class="tab-btn" data-tab="instructions">Setup Instructions</button>
+                            </div>
+                            
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="structure">
+                                    <pre id="structureCode"></pre>
+                                </div>
+                                <div class="tab-pane" id="main">
+                                    <pre id="mainCode"></pre>
+                                </div>
+                                <div class="tab-pane" id="dependencies">
+                                    <pre id="dependenciesCode"></pre>
+                                </div>
+                                <div class="tab-pane" id="instructions">
+                                    <div id="instructionsContent"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button id="downloadBtn" class="action-btn download-btn">
+                                <i class="fas fa-download"></i>
+                                Download Project
+                            </button>
+                            <button id="previewBtn" class="action-btn preview-btn">
+                                <i class="fas fa-eye"></i>
+                                Live Preview
+                            </button>
+                            <button id="regenerateBtn" class="action-btn regenerate-btn">
+                                <i class="fas fa-redo"></i>
+                                Regenerate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="features-section">
+            <h2>What You Can Generate</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-globe"></i>
+                    <h3>Web Applications</h3>
+                    <p>Full-stack web apps with modern frameworks</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>Mobile Apps</h3>
+                    <p>Cross-platform mobile applications</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-desktop"></i>
+                    <h3>Desktop Apps</h3>
+                    <p>Native desktop applications</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-server"></i>
+                    <h3>APIs & Backends</h3>
+                    <p>RESTful APIs and server applications</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-gamepad"></i>
+                    <h3>Games</h3>
+                    <p>Interactive games and simulations</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-tools"></i>
+                    <h3>Utility Tools</h3>
+                    <p>Specialized tools and utilities</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
