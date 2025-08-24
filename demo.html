@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT 5 App Generator - Demo</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .demo-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .demo-header h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        .demo-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 15px;
+        }
+        .demo-section h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        .demo-code {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .demo-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        .demo-steps {
+            background: #e8f4fd;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #4299e1;
+        }
+        .demo-steps ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .demo-steps li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🚀 ChatGPT 5 App Generator Demo</h1>
+            <p>See how easy it is to generate complete applications!</p>
+        </div>
+
+        <div class="demo-section">
+            <h3>🎯 What You Can Generate</h3>
+            <p>This powerful tool can create:</p>
+            <ul>
+                <li><strong>Web Applications</strong> - React, Vue.js, Angular apps</li>
+                <li><strong>Mobile Apps</strong> - Flutter cross-platform applications</li>
+                <li><strong>Backend APIs</strong> - Node.js, Python REST APIs</li>
+                <li><strong>Desktop Apps</strong> - Native desktop applications</li>
+                <li><strong>Games</strong> - Interactive games and simulations</li>
+                <li><strong>Utility Tools</strong> - Practical tools and scripts</li>
+            </ul>
+        </div>
+
+        <div class="demo-section">
+            <h3>⚡ Quick Demo: React Todo App</h3>
+            <div class="demo-steps">
+                <ol>
+                    <li>Select "Web Application" as app type</li>
+                    <li>Choose "React" from technology stack</li>
+                    <li>Enter app name: "TodoApp"</li>
+                    <li>Select category: "Productivity"</li>
+                    <li>Describe: "A simple todo application where users can add, edit, and delete tasks"</li>
+                    <li>Click "Generate App"</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>📁 Generated Project Structure</h3>
+            <div class="demo-code">my-app/
+├── public/
+│   ├── index.html
+│   └── favicon.ico
+├── src/
+│   ├── components/
+│   │   ├── Header.js
+│   │   ├── Footer.js
+│   │   └── MainContent.js
+│   ├── styles/
+│   │   └── App.css
+│   ├── App.js
+│   ├── index.js
+│   └── package.json
+├── README.md
+└── .gitignore</div>
+        </div>
+
+        <div class="demo-section">
+            <h3>💻 Generated React Code</h3>
+            <div class="demo-code">import React, { useState, useEffect } from 'react';
+import './App.css';
+
+function App() {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Initialize your app here
+    console.log('App initialized');
+  }, []);
+
+  const handleAction = () => {
+    // Handle user actions
+    console.log('Action triggered');
+  };
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1>TodoApp</h1>
+        <p>A simple todo application where users can add, edit, and delete tasks</p>
+      </header>
+      <main>
+        <button onClick={handleAction}>
+          Click me!
+        </button>
+      </main>
+    </div>
+  );
+}
+
+export default App;</div>
+        </div>
+
+        <div class="demo-section">
+            <h3>📦 Generated Dependencies</h3>
+            <div class="demo-code">{
+  "name": "todoapp",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  }
+}</div>
+        </div>
+
+        <div class="demo-section">
+            <h3>🚀 Ready to Try?</h3>
+            <p>Experience the full power of the ChatGPT 5 App Generator:</p>
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="index.html" class="demo-button">Launch App Generator</a>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>✨ Key Features</h3>
+            <ul>
+                <li><strong>Smart Code Generation</strong> - Creates production-ready code</li>
+                <li><strong>Multiple Technologies</strong> - Support for popular frameworks</li>
+                <li><strong>Project Downloads</strong> - Export as ZIP files</li>
+                <li><strong>Live Preview</strong> - See your code in action</li>
+                <li><strong>Setup Instructions</strong> - Step-by-step guides</li>
+                <li><strong>Responsive Design</strong> - Works on all devices</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
