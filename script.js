@@ -149,7 +149,9 @@ class MinecraftAddonGenerator {
         const version = this.minecraftVersion.value;
 
         // Generate unique identifiers
-        const uuid = this.generateUUID();
+        const behaviorPackUuid = this.generateUUID();
+        const resourcePackUuid = this.generateUUID();
+        const projectUuid = this.generateUUID();
         const namespace = name.toLowerCase().replace(/[^a-z0-9]/g, '');
 
         return {
@@ -159,7 +161,9 @@ class MinecraftAddonGenerator {
             name: name,
             category: category,
             version: version,
-            uuid: uuid,
+            behaviorPackUuid: behaviorPackUuid,
+            resourcePackUuid: resourcePackUuid,
+            projectUuid: projectUuid,
             namespace: namespace,
             timestamp: new Date().toISOString()
         };
@@ -265,14 +269,15 @@ class MinecraftAddonGenerator {
     }
 
     generateBehaviorPack(addonData) {
+        const minEngine = this.getMinEngineVersion(addonData.version);
         const manifest = {
             format_version: 2,
             header: {
                 name: `${addonData.name} Behavior Pack`,
                 description: addonData.description,
-                uuid: addonData.uuid,
+                uuid: addonData.behaviorPackUuid,
                 version: [1, 0, 0],
-                min_engine_version: [1, 18, 0]
+                min_engine_version: minEngine
             },
             modules: [
                 {
@@ -283,7 +288,7 @@ class MinecraftAddonGenerator {
             ],
             dependencies: [
                 {
-                    uuid: this.generateUUID(),
+                    uuid: addonData.resourcePackUuid,
                     version: [1, 0, 0]
                 }
             ]
@@ -293,14 +298,15 @@ class MinecraftAddonGenerator {
     }
 
     generateResourcePack(addonData) {
+        const minEngine = this.getMinEngineVersion(addonData.version);
         const manifest = {
             format_version: 2,
             header: {
                 name: `${addonData.name} Resource Pack`,
                 description: `Resources for ${addonData.name}`,
-                uuid: this.generateUUID(),
+                uuid: addonData.resourcePackUuid,
                 version: [1, 0, 0],
-                min_engine_version: [1, 18, 0]
+                min_engine_version: minEngine
             },
             modules: [
                 {
@@ -308,16 +314,17 @@ class MinecraftAddonGenerator {
                     uuid: this.generateUUID(),
                     version: [1, 0, 0]
                 }
-            ],
-            dependencies: [
-                {
-                    uuid: this.generateUUID(),
-                    version: [1, 0, 0]
-                }
             ]
         };
 
         return JSON.stringify(manifest, null, 2);
+    }
+
+    getMinEngineVersion(versionString) {
+        if (versionString.startsWith('1.20.50')) return [1, 20, 50];
+        if (versionString.startsWith('1.20.0')) return [1, 20, 0];
+        if (versionString.startsWith('1.19.0')) return [1, 19, 0];
+        return [1, 18, 0];
     }
 
     generateFunctions(addonData) {
@@ -547,7 +554,7 @@ function ${addonData.namespace}_help() {
         }
 
         try {
-            // Create a mock .mcpack file structure
+            // Create a combined .mcaddon file structure (contains both packs)
             const addonData = this.currentGeneratedAddon;
             const zip = new JSZip();
 
@@ -564,7 +571,7 @@ function ${addonData.namespace}_help() {
             const url = URL.createObjectURL(content);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${addonData.name.replace(/[^a-z0-9]/gi, '_')}.mcpack`;
+            a.download = `${addonData.name.replace(/[^a-z0-9]/gi, '_')}.mcaddon`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
