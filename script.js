@@ -1,28 +1,37 @@
-// App Generator JavaScript
-class AppGenerator {
+// AI Minecraft Addon Generator JavaScript
+class MinecraftAddonGenerator {
     constructor() {
         this.initializeElements();
         this.bindEvents();
-        this.currentGeneratedApp = null;
+        this.currentGeneratedAddon = null;
+        this.aiServices = {
+            textToCode: 'https://api.huggingface.co/models/bigcode/starcoder',
+            pixelArt: 'https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image',
+            soundGeneration: 'https://api.elevenlabs.io/v1/text-to-speech',
+            uuidGenerator: 'https://uuidapi.com/api/v1/random'
+        };
     }
 
     initializeElements() {
         // Form elements
-        this.appTypeSelect = document.getElementById('appType');
-        this.techStackCheckboxes = document.querySelectorAll('.tech-option input[type="checkbox"]');
-        this.appDescription = document.getElementById('appDescription');
-        this.appName = document.getElementById('appName');
-        this.appCategory = document.getElementById('appCategory');
+        this.addonTypeSelect = document.getElementById('addonType');
+        this.featureCheckboxes = document.querySelectorAll('.feature-option input[type="checkbox"]');
+        this.addonDescription = document.getElementById('addonDescription');
+        this.addonName = document.getElementById('addonName');
+        this.addonCategory = document.getElementById('addonCategory');
+        this.minecraftVersion = document.getElementById('minecraftVersion');
         this.generateBtn = document.getElementById('generateBtn');
 
         // Output elements
         this.outputSection = document.getElementById('outputSection');
-        this.generatedAppName = document.getElementById('generatedAppName');
-        this.generatedAppType = document.getElementById('generatedAppType');
-        this.generatedAppCategory = document.getElementById('generatedAppCategory');
+        this.generatedAddonName = document.getElementById('generatedAddonName');
+        this.generatedAddonType = document.getElementById('generatedAddonType');
+        this.generatedAddonCategory = document.getElementById('generatedAddonCategory');
+        this.generatedMinecraftVersion = document.getElementById('generatedMinecraftVersion');
         this.structureCode = document.getElementById('structureCode');
-        this.mainCode = document.getElementById('mainCode');
-        this.dependenciesCode = document.getElementById('dependenciesCode');
+        this.behaviorCode = document.getElementById('behaviorCode');
+        this.resourceCode = document.getElementById('resourceCode');
+        this.functionsCode = document.getElementById('functionsCode');
         this.instructionsContent = document.getElementById('instructionsContent');
 
         // Action buttons
@@ -36,30 +45,30 @@ class AppGenerator {
     }
 
     bindEvents() {
-        this.generateBtn.addEventListener('click', () => this.generateApp());
-        this.downloadBtn.addEventListener('click', () => this.downloadProject());
-        this.previewBtn.addEventListener('click', () => this.previewApp());
-        this.regenerateBtn.addEventListener('click', () => this.regenerateApp());
+        this.generateBtn.addEventListener('click', () => this.generateAddon());
+        this.downloadBtn.addEventListener('click', () => this.downloadAddon());
+        this.previewBtn.addEventListener('click', () => this.previewAddon());
+        this.regenerateBtn.addEventListener('click', () => this.regenerateAddon());
 
         // Tab switching
         this.tabButtons.forEach(button => {
             button.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
         });
 
-        // Auto-generate app name from description
-        this.appDescription.addEventListener('input', () => this.autoGenerateAppName());
+        // Auto-generate addon name from description
+        this.addonDescription.addEventListener('input', () => this.autoGenerateAddonName());
     }
 
-    autoGenerateAppName() {
-        const description = this.appDescription.value;
-        if (description && !this.appName.value) {
+    autoGenerateAddonName() {
+        const description = this.addonDescription.value;
+        if (description && !this.addonName.value) {
             const words = description.split(' ').slice(0, 3);
-            const appName = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
-            this.appName.value = appName;
+            const addonName = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+            this.addonName.value = addonName;
         }
     }
 
-    async generateApp() {
+    async generateAddon() {
         if (!this.validateForm()) {
             return;
         }
@@ -67,986 +76,455 @@ class AppGenerator {
         this.setLoadingState(true);
         
         try {
-            // Simulate API call delay
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            // Simulate AI generation process
+            await this.simulateAIGeneration();
             
-            const appData = this.createAppData();
-            this.currentGeneratedApp = appData;
+            const addonData = this.createAddonData();
+            this.currentGeneratedAddon = addonData;
             
-            this.displayGeneratedApp(appData);
+            this.displayGeneratedAddon(addonData);
             this.showOutputSection();
             
         } catch (error) {
-            console.error('Error generating app:', error);
-            alert('Error generating app. Please try again.');
+            console.error('Error generating addon:', error);
+            alert('Error generating addon. Please try again.');
         } finally {
             this.setLoadingState(false);
         }
     }
 
+    async simulateAIGeneration() {
+        const steps = [
+            'Analyzing addon description...',
+            'Generating Minecraft Bedrock Edition code...',
+            'Creating custom textures and assets...',
+            'Generating sound effects...',
+            'Building behavior pack...',
+            'Creating resource pack...',
+            'Generating functions and commands...',
+            'Assembling .mcpack file...'
+        ];
+
+        for (let i = 0; i < steps.length; i++) {
+            this.updateLoadingMessage(steps[i]);
+            await new Promise(resolve => setTimeout(resolve, 800));
+        }
+    }
+
+    updateLoadingMessage(message) {
+        this.generateBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${message}`;
+    }
+
     validateForm() {
-        if (!this.appDescription.value.trim()) {
-            alert('Please describe your app before generating.');
-            this.appDescription.focus();
+        if (!this.addonDescription.value.trim()) {
+            alert('Please describe your addon before generating.');
+            this.addonDescription.focus();
             return false;
         }
 
-        if (!this.appName.value.trim()) {
-            alert('Please enter an app name.');
-            this.appName.focus();
+        if (!this.addonName.value.trim()) {
+            alert('Please enter an addon name.');
+            this.addonName.focus();
             return false;
         }
 
-        const selectedTech = Array.from(this.techStackCheckboxes).filter(cb => cb.checked);
-        if (selectedTech.length === 0) {
-            alert('Please select at least one technology.');
+        const selectedFeatures = Array.from(this.featureCheckboxes).filter(cb => cb.checked);
+        if (selectedFeatures.length === 0) {
+            alert('Please select at least one addon feature.');
             return false;
         }
 
         return true;
     }
 
-    createAppData() {
-        const appType = this.appTypeSelect.value;
-        const selectedTech = Array.from(this.techStackCheckboxes)
-            .filter(cb => cb.checked)
-            .map(cb => cb.value);
-        const description = this.appDescription.value;
-        const appName = this.appName.value;
-        const category = this.appCategory.value;
+    createAddonData() {
+        const addonType = this.addonTypeSelect.value;
+        const selectedFeatures = Array.from(this.featureCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+        const description = this.addonDescription.value;
+        const name = this.addonName.value;
+        const category = this.addonCategory.value;
+        const version = this.minecraftVersion.value;
+
+        // Generate unique identifiers
+        const uuid = this.generateUUID();
+        const namespace = name.toLowerCase().replace(/[^a-z0-9]/g, '');
 
         return {
-            name: appName,
-            type: appType,
-            category: category,
+            type: addonType,
+            features: selectedFeatures,
             description: description,
-            techStack: selectedTech,
-            structure: this.generateProjectStructure(appType, selectedTech),
-            mainCode: this.generateMainCode(appType, selectedTech, description),
-            dependencies: this.generateDependencies(selectedTech),
-            instructions: this.generateSetupInstructions(appType, selectedTech)
+            name: name,
+            category: category,
+            version: version,
+            uuid: uuid,
+            namespace: namespace,
+            timestamp: new Date().toISOString()
         };
     }
 
-    generateProjectStructure(appType, techStack) {
-        const structures = {
-            '3dgame': {
-                unity: `My3DGame/
-├── Assets/
-│   ├── Scripts/
-│   │   ├── Player/
-│   │   │   ├── PlayerController.cs
-│   │   │   ├── PlayerMovement.cs
-│   │   │   └── PlayerHealth.cs
-│   │   ├── Game/
-│   │   │   ├── GameManager.cs
-│   │   │   ├── LevelManager.cs
-│   │   │   └── UIManager.cs
-│   │   ├── Vehicles/
-│   │   │   ├── VehicleController.cs
-│   │   │   └── VehiclePhysics.cs
-│   │   ├── AI/
-│   │   │   ├── NPCController.cs
-│   │   │   └── TrafficAI.cs
-│   │   └── Weapons/
-│   │       ├── WeaponSystem.cs
-│   │       └── Projectile.cs
-│   ├── Prefabs/
-│   │   ├── Player.prefab
-│   │   ├── Vehicle.prefab
-│   │   └── NPC.prefab
-│   ├── Scenes/
-│   │   ├── MainMenu.unity
-│   │   ├── GameWorld.unity
-│   │   └── Loading.unity
-│   ├── Materials/
-│   ├── Textures/
-│   └── Models/
-├── ProjectSettings/
-├── Packages/
-└── README.md`,
-                unreal: `My3DGame/
-├── Content/
-│   ├── Blueprints/
-│   │   ├── Characters/
-│   │   │   ├── BP_PlayerCharacter.uasset
-│   │   │   └── BP_NPCCharacter.uasset
-│   │   ├── Vehicles/
-│   │   │   └── BP_Vehicle.uasset
-│   │   ├── Weapons/
-│   │   │   └── BP_Weapon.uasset
-│   │   └── Game/
-│   │       ├── BP_GameMode.uasset
-│   │       └── BP_GameState.uasset
-│   ├── Maps/
-│   │   ├── MainMenu.umap
-│   │   └── GameWorld.umap
-│   ├── Materials/
-│   ├── Textures/
-│   ├── StaticMeshes/
-│   └── SkeletalMeshes/
-├── Source/
-│   └── My3DGame/
-│       ├── My3DGame.Build.cs
-│       ├── My3DGame.cpp
-│       └── My3DGame.h
-├── Config/
-└── README.md`,
-                threejs: `my-3d-game/
-├── public/
-│   ├── index.html
-│   └── favicon.ico
-├── src/
-│   ├── components/
-│   │   ├── Game/
-│   │   │   ├── GameEngine.js
-│   │   │   ├── SceneManager.js
-│   │   │   └── GameLoop.js
-│   │   ├── World/
-│   │   │   ├── World.js
-│   │   │   ├── Terrain.js
-│   │   │   └── Buildings.js
-│   │   ├── Characters/
-│   │   │   ├── Player.js
-│   │   │   ├── NPC.js
-│   │   │   └── CharacterController.js
-│   │   ├── Vehicles/
-│   │   │   ├── Vehicle.js
-│   │   │   └── VehicleController.js
-│   │   ├── Physics/
-│   │   │   ├── PhysicsEngine.js
-│   │   │   └── Collision.js
-│   │   └── UI/
-│   │       ├── HUD.js
-│   │       └── Menu.js
-│   ├── utils/
-│   │   ├── Loader.js
-│   │   └── Math.js
-│   ├── App.js
-│   ├── index.js
-│   └── package.json
-├── assets/
-│   ├── models/
-│   ├── textures/
-│   └── sounds/
-└── README.md`
-            },
-            web: {
-                react: `my-app/
-├── public/
-│   ├── index.html
-│   └── favicon.ico
-├── src/
-│   ├── components/
-│   │   ├── Header.js
-│   │   ├── Footer.js
-│   │   └── MainContent.js
-│   ├── styles/
-│   │   └── App.css
-│   ├── App.js
-│   ├── index.js
-│   └── package.json
-├── README.md
-└── .gitignore`,
-                vue: `my-app/
-├── public/
-│   └── index.html
-├── src/
-│   ├── components/
-│   │   ├── Header.vue
-│   │   ├── Footer.vue
-│   │   └── MainContent.vue
-│   ├── assets/
-│   ├── App.vue
-│   ├── main.js
-│   └── package.json
-├── README.md
-└── .gitignore`,
-                angular: `my-app/
-├── src/
-│   ├── app/
-│   │   ├── components/
-│   │   │   ├── header/
-│   │   │   ├── footer/
-│   │   │   └── main-content/
-│   │   ├── services/
-│   │   ├── app.component.ts
-│   │   └── app.module.ts
-│   ├── assets/
-│   ├── index.html
-│   ├── main.ts
-│   └── styles.css
-├── angular.json
-├── package.json
-└── README.md`
-            },
-            mobile: {
-                flutter: `my_app/
-├── android/
-├── ios/
-├── lib/
-│   ├── screens/
-│   │   ├── home_screen.dart
-│   │   └── detail_screen.dart
-│   ├── widgets/
-│   │   ├── custom_button.dart
-│   │   └── custom_card.dart
-│   ├── models/
-│   ├── services/
-│   ├── main.dart
-│   └── app.dart
-├── pubspec.yaml
-└── README.md`
-            },
-            api: {
-                node: `my-api/
-├── src/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── middleware/
-│   ├── utils/
-│   └── app.js
-├── tests/
-├── package.json
-├── .env
-└── README.md`,
-                python: `my_api/
-├── app/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── middleware/
-│   └── main.py
-├── tests/
-├── requirements.txt
-├── .env
-└── README.md`
-            }
-        };
-
-        const primaryTech = techStack[0];
-        return structures[appType]?.[primaryTech] || structures[appType]?.['react'] || 'Project structure will be generated based on your selections.';
-    }
-
-    generateMainCode(appType, techStack, description) {
-        const primaryTech = techStack[0];
-        
-        if (appType === 'web' && primaryTech === 'react') {
-            return `import React, { useState, useEffect } from 'react';
-import './App.css';
-
-function App() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    // Initialize your app here
-    console.log('App initialized');
-  }, []);
-
-  const handleAction = () => {
-    // Handle user actions
-    console.log('Action triggered');
-  };
-
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>${this.appName.value}</h1>
-        <p>${description}</p>
-      </header>
-      <main>
-        <button onClick={handleAction}>
-          Click me!
-        </button>
-      </main>
-    </div>
-  );
-}
-
-export default App;`;
-        }
-
-        if (appType === 'mobile' && primaryTech === 'flutter') {
-            return `import 'package:flutter/material.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '${this.appName.value}',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: '${this.appName.value}'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              '${description}',
-              style: Theme.of(context).textTheme.headline6,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}`;
-        }
-
-        if (appType === '3dgame' && primaryTech === 'unity') {
-            return `using UnityEngine;
-using UnityEngine.UI;
-
-public class PlayerController : MonoBehaviour
-{
-    [Header("Movement Settings")]
-    public float moveSpeed = 5f;
-    public float rotationSpeed = 100f;
-    public float jumpForce = 5f;
-    
-    [Header("Components")]
-    public CharacterController characterController;
-    public Camera playerCamera;
-    public Transform groundCheck;
-    
-    private Vector3 moveDirection;
-    private float verticalVelocity;
-    private bool isGrounded;
-    
-    void Start()
-    {
-        // Lock cursor to center of screen
-        Cursor.lockState = CursorLockMode.Locked;
-        
-        // Get components if not assigned
-        if (characterController == null)
-            characterController = GetComponent<CharacterController>();
-        if (playerCamera == null)
-            playerCamera = Camera.main;
-    }
-    
-    void Update()
-    {
-        HandleMovement();
-        HandleMouseLook();
-        HandleJump();
-    }
-    
-    void HandleMovement()
-    {
-        // Get input
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-        
-        // Calculate movement direction
-        Vector3 forward = transform.forward * vertical;
-        Vector3 right = transform.right * horizontal;
-        moveDirection = (forward + right).normalized;
-        
-        // Apply movement
-        characterController.Move(moveDirection * moveSpeed * Time.deltaTime);
-    }
-    
-    void HandleMouseLook()
-    {
-        float mouseX = Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * rotationSpeed * Time.deltaTime;
-        
-        // Rotate player left/right
-        transform.Rotate(Vector3.up * mouseX);
-        
-        // Rotate camera up/down
-        playerCamera.transform.Rotate(Vector3.left * mouseY);
-        
-        // Clamp camera rotation
-        Vector3 cameraRotation = playerCamera.transform.eulerAngles;
-        if (cameraRotation.x > 180f)
-            cameraRotation.x -= 360f;
-        cameraRotation.x = Mathf.Clamp(cameraRotation.x, -80f, 80f);
-        playerCamera.transform.eulerAngles = cameraRotation;
-    }
-    
-    void HandleJump()
-    {
-        // Check if grounded
-        isGrounded = Physics.CheckSphere(groundCheck.position, 0.1f, LayerMask.GetMask("Ground"));
-        
-        if (isGrounded && verticalVelocity < 0)
-        {
-            verticalVelocity = -2f;
-        }
-        
-        // Jump input
-        if (Input.GetButtonDown("Jump") && isGrounded)
-        {
-            verticalVelocity = jumpForce;
-        }
-        
-        // Apply gravity
-        verticalVelocity += Physics.gravity.y * Time.deltaTime;
-        
-        // Apply vertical movement
-        Vector3 verticalMovement = Vector3.up * verticalVelocity * Time.deltaTime;
-        characterController.Move(verticalMovement);
-    }
-}`;
-        }
-        
-        if (appType === '3dgame' && primaryTech === 'threejs') {
-            return `import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-
-class GameEngine {
-    constructor() {
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.renderer = new THREE.WebGLRenderer({ antialias: true });
-        this.clock = new THREE.Clock();
-        this.player = null;
-        this.vehicles = [];
-        this.npcs = [];
-        
-        this.init();
-    }
-    
-    init() {
-        // Setup renderer
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        document.body.appendChild(this.renderer.domElement);
-        
-        // Setup scene
-        this.setupScene();
-        this.setupLighting();
-        this.setupPlayer();
-        this.setupWorld();
-        this.setupControls();
-        
-        // Start game loop
-        this.animate();
-    }
-    
-    setupScene() {
-        // Background
-        this.scene.background = new THREE.Color(0x87CEEB); // Sky blue
-        
-        // Fog for atmosphere
-        this.scene.fog = new THREE.Fog(0x87CEEB, 100, 500);
-    }
-    
-    setupLighting() {
-        // Ambient light
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-        this.scene.add(ambientLight);
-        
-        // Directional light (sun)
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight.position.set(50, 100, 50);
-        directionalLight.castShadow = true;
-        directionalLight.shadow.mapSize.width = 2048;
-        directionalLight.shadow.mapSize.height = 2048;
-        this.scene.add(directionalLight);
-    }
-    
-    setupPlayer() {
-        // Create player character
-        const geometry = new THREE.CapsuleGeometry(1, 2, 4, 8);
-        const material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
-        this.player = new THREE.Mesh(geometry, material);
-        this.player.position.set(0, 1, 0);
-        this.player.castShadow = true;
-        this.scene.add(this.player);
-        
-        // Position camera behind player
-        this.camera.position.set(0, 3, 5);
-        this.camera.lookAt(this.player.position);
-    }
-    
-    setupWorld() {
-        // Ground
-        const groundGeometry = new THREE.PlaneGeometry(1000, 1000);
-        const groundMaterial = new THREE.MeshLambertMaterial({ color: 0x90EE90 });
-        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-        ground.rotation.x = -Math.PI / 2;
-        ground.receiveShadow = true;
-        this.scene.add(ground);
-        
-        // Buildings
-        this.createBuildings();
-        
-        // Roads
-        this.createRoads();
-    }
-    
-    createBuildings() {
-        for (let i = 0; i < 20; i++) {
-            const height = Math.random() * 20 + 10;
-            const geometry = new THREE.BoxGeometry(10, height, 10);
-            const material = new THREE.MeshLambertMaterial({ 
-                color: Math.random() * 0xffffff 
-            });
-            const building = new THREE.Mesh(geometry, material);
-            
-            building.position.set(
-                (Math.random() - 0.5) * 200,
-                height / 2,
-                (Math.random() - 0.5) * 200
-            );
-            building.castShadow = true;
-            building.receiveShadow = true;
-            this.scene.add(building);
-        }
-    }
-    
-    createRoads() {
-        // Main road
-        const roadGeometry = new THREE.PlaneGeometry(1000, 20);
-        const roadMaterial = new THREE.MeshLambertMaterial({ color: 0x333333 });
-        const road = new THREE.Mesh(roadGeometry, roadMaterial);
-        road.rotation.x = -Math.PI / 2;
-        road.position.y = 0.01;
-        this.scene.add(road);
-    }
-    
-    setupControls() {
-        // Keyboard controls
-        this.keys = {};
-        document.addEventListener('keydown', (e) => this.keys[e.code] = true);
-        document.addEventListener('keyup', (e) => this.keys[e.code] = false);
-        
-        // Mouse controls
-        document.addEventListener('mousemove', (e) => {
-            if (document.pointerLockElement === this.renderer.domElement) {
-                this.player.rotation.y -= e.movementX * 0.002;
-                this.camera.rotation.x -= e.movementY * 0.002;
-                this.camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, this.camera.rotation.x));
-            }
-        });
-        
-        // Click to lock pointer
-        this.renderer.domElement.addEventListener('click', () => {
-            this.renderer.domElement.requestPointerLock();
+    generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0;
+            const v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
         });
     }
-    
-    updatePlayer() {
-        const delta = this.clock.getDelta();
-        const speed = 10;
+
+    displayGeneratedAddon(addonData) {
+        this.generatedAddonName.textContent = addonData.name;
+        this.generatedAddonType.textContent = this.getAddonTypeDisplay(addonData.type);
+        this.generatedAddonCategory.textContent = this.getCategoryDisplay(addonData.category);
+        this.generatedMinecraftVersion.textContent = addonData.version;
+
+        // Generate project structure
+        this.structureCode.textContent = this.generateProjectStructure(addonData);
         
-        // Movement
-        if (this.keys['KeyW']) {
-            this.player.position.z -= Math.cos(this.player.rotation.y) * speed * delta;
-            this.player.position.x -= Math.sin(this.player.rotation.y) * speed * delta;
-        }
-        if (this.keys['KeyS']) {
-            this.player.position.z += Math.cos(this.player.rotation.y) * speed * delta;
-            this.player.position.x += Math.sin(this.player.rotation.y) * speed * delta;
-        }
-        if (this.keys['KeyA']) {
-            this.player.position.x -= Math.cos(this.player.rotation.y) * speed * delta;
-            this.player.position.z += Math.sin(this.player.rotation.y) * speed * delta;
-        }
-        if (this.keys['KeyD']) {
-            this.player.position.x += Math.cos(this.player.rotation.y) * speed * delta;
-            this.player.position.z -= Math.sin(this.player.rotation.y) * speed * delta;
-        }
+        // Generate behavior pack
+        this.behaviorCode.textContent = this.generateBehaviorPack(addonData);
         
-        // Update camera position
-        const cameraOffset = new THREE.Vector3(0, 3, 5);
-        cameraOffset.applyQuaternion(this.player.quaternion);
-        this.camera.position.copy(this.player.position).add(cameraOffset);
-        this.camera.lookAt(this.player.position);
-    }
-    
-    animate() {
-        requestAnimationFrame(() => this.animate());
+        // Generate resource pack
+        this.resourceCode.textContent = this.generateResourcePack(addonData);
         
-        this.updatePlayer();
-        this.renderer.render(this.scene, this.camera);
-    }
-}
-
-// Initialize game
-const game = new GameEngine();`;
-        }
+        // Generate functions
+        this.functionsCode.textContent = this.generateFunctions(addonData);
         
-        if (appType === 'api' && primaryTech === 'node') {
-            return `const express = require('express');
-const cors = require('cors');
-const app = express();
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// Routes
-app.get('/', (req, res) => {
-  res.json({
-    message: 'Welcome to ${this.appName.value} API',
-    description: '${description}',
-    status: 'running'
-  });
-});
-
-app.get('/api/data', (req, res) => {
-  res.json({
-    data: [],
-    message: 'Data endpoint'
-  });
-});
-
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(\`Server running on port \${PORT}\`);
-});`;
-        }
-
-        return `// Main code for ${this.appName.value}
-// This will be generated based on your app type and technology stack
-
-console.log('${this.appName.value} initialized');
-console.log('Description: ${description}');
-console.log('Tech Stack: ${techStack.join(', ')}');`;
+        // Generate installation instructions
+        this.instructionsContent.innerHTML = this.generateInstallationInstructions(addonData);
     }
 
-    generateDependencies(techStack) {
-        const dependencies = {
-            react: `{
-  "name": "${this.appName.value.toLowerCase().replace(/\s+/g, '-')}",
-  "version": "1.0.0",
-  "private": true,
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
-}`,
-            vue: `{
-  "name": "${this.appName.value.toLowerCase().replace(/\s+/g, '-')}",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
-  },
-  "dependencies": {
-    "vue": "^3.3.0",
-    "vue-router": "^4.2.0"
-  },
-  "devDependencies": {
-    "@vue/cli-service": "^5.0.0",
-    "@vue/compiler-sfc": "^3.3.0"
-  }
-}`,
-            flutter: `name: ${this.appName.value.toLowerCase().replace(/\s+/g, '_')}
-description: ${this.appDescription.value}
-version: 1.0.0+1
+    getAddonTypeDisplay(type) {
+        const typeMap = {
+            'item': 'Custom Item',
+            'mob': 'Custom Mob',
+            'block': 'Custom Block',
+            'ability': 'Ability/Spell',
+            'dimension': 'Custom Dimension',
+            'structure': 'Custom Structure',
+            'biome': 'Custom Biome',
+            'recipe': 'Custom Recipe',
+            'loot': 'Loot Table',
+            'function': 'Command Function'
+        };
+        return typeMap[type] || type;
+    }
 
-environment:
-  sdk: ">=2.17.0 <3.0.0"
+    getCategoryDisplay(category) {
+        const categoryMap = {
+            'combat': 'Combat & Weapons',
+            'magic': 'Magic & Spells',
+            'technology': 'Technology & Redstone',
+            'nature': 'Nature & Farming',
+            'adventure': 'Adventure & Exploration',
+            'decoration': 'Decoration & Building',
+            'utility': 'Utility & Tools',
+            'other': 'Other'
+        };
+        return categoryMap[category] || category;
+    }
 
-dependencies:
-  flutter:
-    sdk: flutter
-  cupertino_icons: ^1.0.2
+    generateProjectStructure(addonData) {
+        const structure = [
+            `${addonData.name}/`,
+            `├── behavior_pack/`,
+            `│   ├── manifest.json`,
+            `│   ├── pack_icon.png`,
+            `│   ├── entities/`,
+            `│   │   └── ${addonData.namespace}_${addonData.type}.json`,
+            `│   ├── items/`,
+            `│   │   └── ${addonData.namespace}_${addonData.type}.json`,
+            `│   ├── loot_tables/`,
+            `│   │   └── ${addonData.namespace}_${addonData.type}.json`,
+            `│   ├── recipes/`,
+            `│   │   └── ${addonData.namespace}_${addonData.type}.json`,
+            `│   ├── functions/`,
+            `│   │   └── ${addonData.namespace}_${addonData.type}.mcfunction`,
+            `│   └── animations/`,
+            `│       └── ${addonData.namespace}_${addonData.type}.json`,
+            `└── resource_pack/`,
+            `    ├── manifest.json`,
+            `    ├── pack_icon.png`,
+            `    ├── textures/`,
+            `    │   ├── items/`,
+            `    │   │   └── ${addonData.namespace}_${addonData.type}.png`,
+            `    │   ├── blocks/`,
+            `    │   │   └── ${addonData.namespace}_${addonData.type}.png`,
+            `    │   └── entity/`,
+            `    │       └── ${addonData.namespace}_${addonData.type}.png`,
+            `    ├── sounds/`,
+            `    │   └── ${addonData.namespace}_${addonData.type}.ogg`,
+            `    ├── texts/`,
+            `    │   └── en_US.lang`,
+            `    └── animations/`,
+            `        └── ${addonData.namespace}_${addonData.type}.json`
+        ];
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^2.0.0
+        return structure.join('\n');
+    }
 
-flutter:
-  uses-material-design: true`,
-            node: `{
-  "name": "${this.appName.value.toLowerCase().replace(/\s+/g, '-')}",
-  "version": "1.0.0",
-  "description": "${this.appDescription.value}",
-  "main": "src/app.js",
-  "scripts": {
-    "start": "node src/app.js",
-    "dev": "nodemon src/app.js",
-    "test": "jest"
-  },
-  "dependencies": {
-    "express": "^4.18.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.20",
-    "jest": "^29.0.0"
-  }
-}`,
-            python: `# requirements.txt
-fastapi==0.104.0
-uvicorn==0.24.0
-pydantic==2.4.0
-python-dotenv==1.0.0
-requests==2.31.0`,
-            unity: `# Unity Project Dependencies
-# Install via Unity Package Manager:
-# - Input System (for modern input handling)
-# - Universal Render Pipeline (for better graphics)
-# - ProBuilder (for level design)
-# - Cinemachine (for camera systems)
-# - NavMeshComponents (for AI navigation)
-# - TextMeshPro (for UI text)
-# - Post Processing (for visual effects)
-
-# Core Unity Version: 2022.3 LTS or newer
-# Platform: PC, Mac, Linux, Android, iOS, Xbox, PlayStation`,
-            unreal: `# Unreal Engine Project Dependencies
-# Install via Epic Games Launcher:
-# - Unreal Engine 5.3 or newer
-# - Visual Studio 2022 (for C++ development)
-# - DirectX 12 support
-# - Vulkan support (optional)
-
-# Core Engine Features:
-# - Nanite (virtualized geometry)
-# - Lumen (global illumination)
-# - Niagara (particle systems)
-# - Chaos (physics simulation)`,
-            threejs: `{
-  "name": "${this.appName.value.toLowerCase().replace(/\s+/g, '-')}",
-  "version": "1.0.0",
-  "description": "${this.appDescription.value}",
-  "main": "src/index.js",
-  "scripts": {
-    "start": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "dev": "vite --host"
-  },
-  "dependencies": {
-    "three": "^0.158.0",
-    "three-stdlib": "^2.28.0"
-  },
-  "devDependencies": {
-    "vite": "^5.0.0",
-    "@vitejs/plugin-react": "^4.2.0"
-  }
-}`,
-            babylon: `{
-  "name": "${this.appName.value.toLowerCase().replace(/\s+/g, '-')}",
-  "version": "1.0.0",
-  "description": "${this.appDescription.value}",
-  "main": "src/index.js",
-  "scripts": {
-    "start": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@babylonjs/core": "^6.0.0",
-    "@babylonjs/gui": "^6.0.0",
-    "@babylonjs/loaders": "^6.0.0",
-    "@babylonjs/materials": "^6.0.0"
-  },
-  "devDependencies": {
-    "vite": "^5.0.0"
-  }
-}`
+    generateBehaviorPack(addonData) {
+        const manifest = {
+            format_version: 2,
+            header: {
+                name: `${addonData.name} Behavior Pack`,
+                description: addonData.description,
+                uuid: addonData.uuid,
+                version: [1, 0, 0],
+                min_engine_version: [1, 18, 0]
+            },
+            modules: [
+                {
+                    type: "data",
+                    uuid: this.generateUUID(),
+                    version: [1, 0, 0]
+                }
+            ],
+            dependencies: [
+                {
+                    uuid: this.generateUUID(),
+                    version: [1, 0, 0]
+                }
+            ]
         };
 
-        const primaryTech = techStack[0];
-        return dependencies[primaryTech] || 'Dependencies will be generated based on your technology selection.';
+        return JSON.stringify(manifest, null, 2);
     }
 
-    generateSetupInstructions(appType, techStack) {
-        const primaryTech = techStack[0];
+    generateResourcePack(addonData) {
+        const manifest = {
+            format_version: 2,
+            header: {
+                name: `${addonData.name} Resource Pack`,
+                description: `Resources for ${addonData.name}`,
+                uuid: this.generateUUID(),
+                version: [1, 0, 0],
+                min_engine_version: [1, 18, 0]
+            },
+            modules: [
+                {
+                    type: "resources",
+                    uuid: this.generateUUID(),
+                    version: [1, 0, 0]
+                }
+            ],
+            dependencies: [
+                {
+                    uuid: this.generateUUID(),
+                    version: [1, 0, 0]
+                }
+            ]
+        };
+
+        return JSON.stringify(manifest, null, 2);
+    }
+
+    generateFunctions(addonData) {
+        let functions = '';
         
-        let instructions = `<h3>Setup Instructions for ${this.appName.value}</h3>`;
-        
-        if (appType === 'web' && primaryTech === 'react') {
-            instructions += `
+        switch(addonData.type) {
+            case 'item':
+                functions = this.generateItemFunctions(addonData);
+                break;
+            case 'mob':
+                functions = this.generateMobFunctions(addonData);
+                break;
+            case 'block':
+                functions = this.generateBlockFunctions(addonData);
+                break;
+            case 'ability':
+                functions = this.generateAbilityFunctions(addonData);
+                break;
+            default:
+                functions = this.generateDefaultFunctions(addonData);
+        }
+
+        return functions;
+    }
+
+    generateItemFunctions(addonData) {
+        return `# ${addonData.name} - Custom Item Functions
+# Generated by AI Minecraft Addon Generator
+
+# Give the custom item to player
+function give_${addonData.namespace}_item(player) {
+    give @s ${addonData.namespace}:${addonData.type} 1
+    tellraw @s {"rawtext":[{"text":"§aYou received ${addonData.name}!"}]}
+}
+
+# Custom item effects
+function ${addonData.namespace}_item_effects() {
+    # Add custom effects when item is used
+    effect @s speed 10 1
+    effect @s jump_boost 10 1
+    particle minecraft:enchanting_glyph ~ ~1 ~ 0.5 0.5 0.5 0.1 10
+    playsound random.levelup @s ~ ~ ~ 1 1
+}
+
+# Register item events
+scoreboard objectives add ${addonData.namespace}_usage dummy
+scoreboard objectives setdisplay sidebar ${addonData.namespace}_usage`;
+    }
+
+    generateMobFunctions(addonData) {
+        return `# ${addonData.name} - Custom Mob Functions
+# Generated by AI Minecraft Addon Generator
+
+# Spawn custom mob
+function spawn_${addonData.namespace}_mob() {
+    summon armor_stand ~ ~ ~ {Tags:["${addonData.namespace}_mob"],CustomName:"${addonData.name}"}
+    effect @e[tag=${addonData.namespace}_mob] glowing 10 1
+    particle minecraft:portal ~ ~ ~ 1 1 1 0.1 50
+}
+
+# Custom mob behavior
+function ${addonData.namespace}_mob_behavior() {
+    # Make mob follow nearest player
+    execute as @e[tag=${addonData.namespace}_mob] at @s run tp @s ~ ~ ~ facing @p
+    # Add custom effects
+    effect @e[tag=${addonData.namespace}_mob] speed 5 1
+}
+
+# Mob death effects
+function ${addonData.namespace}_mob_death() {
+    execute as @e[tag=${addonData.namespace}_mob] unless entity @s run function ${addonData.namespace}_death_effects
+}
+
+function ${addonData.namespace}_death_effects() {
+    particle minecraft:explosion ~ ~ ~ 1 1 1 0.1 10
+    playsound random.explode @a ~ ~ ~ 1 1
+}`;
+    }
+
+    generateBlockFunctions(addonData) {
+        return `# ${addonData.name} - Custom Block Functions
+# Generated by AI Minecraft Addon Generator
+
+# Place custom block
+function place_${addonData.namespace}_block() {
+    setblock ~ ~ ~ ${addonData.namespace}:${addonData.type}
+    particle minecraft:block_dust ~ ~ ~ 0.5 0.5 0.5 0.1 20
+    playsound random.place @s ~ ~ ~ 1 1
+}
+
+# Custom block interactions
+function ${addonData.namespace}_block_interact() {
+    # Add effects when block is right-clicked
+    effect @s regeneration 5 1
+    particle minecraft:heart ~ ~1 ~ 0.5 0.5 0.5 0.1 10
+    tellraw @s {"rawtext":[{"text":"§b${addonData.name} block activated!"}]}
+}
+
+# Block breaking effects
+function ${addonData.namespace}_block_break() {
+    particle minecraft:block_dust ~ ~ ~ 1 1 1 0.1 30
+    playsound random.break @s ~ ~ ~ 1 1
+    # Drop custom loot
+    summon item ~ ~ ~ {Item:{id:"${addonData.namespace}:${addonData.type}",Count:1}}
+}`;
+    }
+
+    generateAbilityFunctions(addonData) {
+        return `# ${addonData.name} - Custom Ability Functions
+# Generated by AI Minecraft Addon Generator
+
+# Cast ability
+function cast_${addonData.namespace}_ability() {
+    # Check if player has required items
+    clear @s ${addonData.namespace}:ability_catalyst 0 1
+    # Add ability effects
+    effect @s strength 20 2
+    effect @s speed 20 2
+    effect @s jump_boost 20 2
+    # Create particle effects
+    particle minecraft:enchanting_glyph ~ ~1 ~ 1 1 1 0.1 50
+    particle minecraft:portal ~ ~ ~ 2 2 2 0.1 100
+    # Play custom sounds
+    playsound random.levelup @s ~ ~ ~ 1 1.5
+    # Create explosion effect
+    execute at @s run particle minecraft:explosion ~ ~ ~ 0.1 0.1 0.1 0.1 5
+}
+
+# Ability cooldown
+function ${addonData.namespace}_ability_cooldown() {
+    scoreboard players add @s ${addonData.namespace}_cooldown 1
+    execute if score @s ${addonData.namespace}_cooldown matches 200.. run scoreboard players set @s ${addonData.namespace}_cooldown 0
+}
+
+# Check ability availability
+function check_${addonData.namespace}_ability() {
+    execute if score @s ${addonData.namespace}_cooldown matches 0.. run tellraw @s {"rawtext":[{"text":"§c${addonData.name} ability is on cooldown!"}]}
+}`;
+    }
+
+    generateDefaultFunctions(addonData) {
+        return `# ${addonData.name} - Default Functions
+# Generated by AI Minecraft Addon Generator
+
+# Main function
+function ${addonData.namespace}_main() {
+    tellraw @s {"rawtext":[{"text":"§a${addonData.name} addon loaded successfully!"}]}
+    particle minecraft:enchanting_glyph ~ ~1 ~ 0.5 0.5 0.5 0.1 20
+    playsound random.levelup @s ~ ~ ~ 1 1
+}
+
+# Utility functions
+function ${addonData.namespace}_help() {
+    tellraw @s {"rawtext":[{"text":"§6=== ${addonData.name} Help ==="}]}
+    tellraw @s {"rawtext":[{"text":"§eUse /function ${addonData.namespace}:main to start"}]}
+    tellraw @s {"rawtext":[{"text":"§eUse /function ${addonData.namespace}:help for this message"}]}
+}`;
+    }
+
+    generateInstallationInstructions(addonData) {
+        return `
+            <div class="installation-steps">
+                <h3>Installation Instructions</h3>
                 <ol>
-                    <li><strong>Prerequisites:</strong> Make sure you have Node.js installed (version 14 or higher)</li>
-                    <li><strong>Create the project:</strong> <code>npx create-react-app ${this.appName.value.toLowerCase().replace(/\s+/g, '-')}</code></li>
-                    <li><strong>Navigate to project:</strong> <code>cd ${this.appName.value.toLowerCase().replace(/\s+/g, '-')}</code></li>
-                    <li><strong>Install dependencies:</strong> <code>npm install</code></li>
-                    <li><strong>Start development server:</strong> <code>npm start</code></li>
-                    <li><strong>Build for production:</strong> <code>npm run build</code></li>
+                    <li><strong>Download the .mcpack file</strong> using the button above</li>
+                    <li><strong>Open Minecraft Bedrock Edition</strong> on your device</li>
+                    <li><strong>Go to Settings</strong> → <strong>Storage</strong> → <strong>Behavior Packs</strong></li>
+                    <li><strong>Click "My Packs"</strong> and find the downloaded file</li>
+                    <li><strong>Click the file</strong> to import it into Minecraft</li>
+                    <li><strong>Create a new world</strong> or edit an existing one</li>
+                    <li><strong>Go to "Experiments"</strong> and enable "Holiday Creator Features"</li>
+                    <li><strong>Go to "Resource Packs"</strong> and activate the addon</li>
+                    <li><strong>Go to "Behavior Packs"</strong> and activate the addon</li>
+                    <li><strong>Start your world</strong> and enjoy your new ${addonData.name}!</li>
                 </ol>
-                <p><strong>Note:</strong> The app will open in your browser at <code>http://localhost:3000</code></p>`;
-        } else if (appType === 'mobile' && primaryTech === 'flutter') {
-            instructions += `
-                <ol>
-                    <li><strong>Prerequisites:</strong> Install Flutter SDK and set up your development environment</li>
-                    <li><strong>Create the project:</strong> <code>flutter create ${this.appName.value.toLowerCase().replace(/\s+/g, '_')}</code></li>
-                    <li><strong>Navigate to project:</strong> <code>cd ${this.appName.value.toLowerCase().replace(/\s+/g, '_')}</code></li>
-                    <li><strong>Get dependencies:</strong> <code>flutter pub get</code></li>
-                    <li><strong>Run the app:</strong> <code>flutter run</code></li>
-                </ol>
-                <p><strong>Note:</strong> Make sure you have an emulator running or a device connected</p>`;
-        } else if (appType === 'api' && primaryTech === 'node') {
-            instructions += `
-                <ol>
-                    <li><strong>Prerequisites:</strong> Make sure you have Node.js installed</li>
-                    <li><strong>Create project directory:</strong> <code>mkdir ${this.appName.value.toLowerCase().replace(/\s+/g, '-')}</code></li>
-                    <li><strong>Navigate to project:</strong> <code>cd ${this.appName.value.toLowerCase().replace(/\s+/g, '-')}</code></li>
-                    <li><strong>Initialize project:</strong> <code>npm init -y</code></li>
-                    <li><strong>Install dependencies:</strong> <code>npm install</code></li>
-                    <li><strong>Start the server:</strong> <code>npm start</code></li>
-                </ol>
-                <p><strong>Note:</strong> The API will be available at <code>http://localhost:3000</code></p>`;
-        } else if (appType === '3dgame' && primaryTech === 'unity') {
-            instructions += `
-                <ol>
-                    <li><strong>Prerequisites:</strong> Download and install Unity Hub from <a href="https://unity.com/download" target="_blank">unity.com</a></li>
-                    <li><strong>Install Unity:</strong> Use Unity Hub to install Unity 2022.3 LTS or newer</li>
-                    <li><strong>Create Project:</strong> Open Unity Hub → New Project → 3D Core</li>
-                    <li><strong>Import Assets:</strong> Copy the generated scripts to Assets/Scripts folder</li>
-                    <li><strong>Setup Scene:</strong> Create a new scene and add a ground plane with "Ground" layer</li>
-                    <li><strong>Add Player:</strong> Create an empty GameObject and attach PlayerController script</li>
-                    <li><strong>Add Camera:</strong> Create a camera and assign it to PlayerController</li>
-                    <li><strong>Test:</strong> Press Play and use WASD to move, mouse to look around</li>
-                </ol>
-                <p><strong>Controls:</strong> WASD to move, Mouse to look, Space to jump</p>
-                <p><strong>Next Steps:</strong> Add vehicles, NPCs, weapons, and expand the world!</p>`;
-        } else if (appType === '3dgame' && primaryTech === 'unreal') {
-            instructions += `
-                <ol>
-                    <li><strong>Prerequisites:</strong> Download Epic Games Launcher and Unreal Engine 5.3+</li>
-                    <li><strong>Create Project:</strong> Open Epic Launcher → Unreal Engine → New Project → Games → Blank</li>
-                    <li><strong>Setup C++:</strong> Choose C++ project for full code access</li>
-                    <li><strong>Import Blueprints:</strong> Create Blueprint classes based on the generated structure</li>
-                    <li><strong>Setup Character:</strong> Create a Character Blueprint with movement and camera components</li>
-                    <li><strong>Add Vehicles:</strong> Create Vehicle Blueprint with physics and controls</li>
-                    <li><strong>Build World:</strong> Use the level editor to create your game world</li>
-                    <li><strong>Test:</strong> Press Play and explore your 3D world</li>
-                </ol>
-                <p><strong>Features:</strong> Nanite geometry, Lumen lighting, Chaos physics, Niagara particles</p>
-                <p><strong>Next Steps:</strong> Add AI, multiplayer, and advanced graphics features!</p>`;
-        } else if (appType === '3dgame' && primaryTech === 'threejs') {
-            instructions += `
-                <ol>
-                    <li><strong>Prerequisites:</strong> Make sure you have Node.js installed (version 16 or higher)</li>
-                    <li><strong>Create Project:</strong> <code>mkdir ${this.appName.value.toLowerCase().replace(/\s+/g, '-')}</code></li>
-                    <li><strong>Navigate to Project:</strong> <code>cd ${this.appName.value.toLowerCase().replace(/\s+/g, '-')}</code></li>
-                    <li><strong>Initialize:</strong> <code>npm init -y</code></li>
-                    <li><strong>Install Dependencies:</strong> <code>npm install</code></li>
-                    <li><strong>Start Development:</strong> <code>npm run dev</code></li>
-                    <li><strong>Open Browser:</strong> Navigate to <code>http://localhost:5173</code></li>
-                    <li><strong>Test Controls:</strong> Click to lock mouse, WASD to move, mouse to look</li>
-                </ol>
-                <p><strong>Controls:</strong> Click to lock mouse, WASD to move, Mouse to look around</p>
-                <p><strong>Next Steps:</strong> Add more buildings, vehicles, NPCs, and game mechanics!</p>`;
-        } else if (appType === '3dgame' && primaryTech === 'babylon') {
-            instructions += `
-                <ol>
-                    <li><strong>Prerequisites:</strong> Make sure you have Node.js installed (version 16 or higher)</li>
-                    <li><strong>Create Project:</strong> <code>mkdir ${this.appName.value.toLowerCase().replace(/\s+/g, '-')}</code></li>
-                    <li><strong>Navigate to Project:</strong> <code>cd ${this.appName.value.toLowerCase().replace(/\s+/g, '-')}</code></li>
-                    <li><strong>Initialize:</strong> <code>npm init -y</code></li>
-                    <li><strong>Install Dependencies:</strong> <code>npm install</code></li>
-                    <li><strong>Start Development:</strong> <code>npm run dev</code></li>
-                    <li><strong>Open Browser:</strong> Navigate to <code>http://localhost:5173</code></li>
-                    <li><strong>Test Controls:</strong> Use the generated 3D scene and controls</li>
-                </ol>
-                <p><strong>Features:</strong> Advanced 3D graphics, physics, materials, and effects</p>
-                <p><strong>Next Steps:</strong> Expand the world, add game mechanics, and enhance graphics!</p>`;
-        } else {
-            instructions += `
-                <p>Setup instructions will be generated based on your specific app type and technology stack.</p>
-                <p>Please refer to the official documentation for your chosen technologies:</p>
+                
+                <h4>In-Game Usage</h4>
+                <p>Use the following commands in your world:</p>
                 <ul>
-                    ${techStack.map(tech => `<li><a href="#" target="_blank">${tech.toUpperCase()} Documentation</a></li>`).join('')}
-                </ul>`;
-        }
-
-        return instructions;
-    }
-
-    displayGeneratedApp(appData) {
-        this.generatedAppName.textContent = appData.name;
-        this.generatedAppType.textContent = this.formatAppType(appData.type);
-        this.generatedAppCategory.textContent = this.formatCategory(appData.category);
-        
-        this.structureCode.textContent = appData.structure;
-        this.mainCode.textContent = appData.mainCode;
-        this.dependenciesCode.textContent = appData.dependencies;
-        this.instructionsContent.innerHTML = appData.instructions;
-    }
-
-    formatAppType(type) {
-        const types = {
-            web: 'Web App',
-            mobile: 'Mobile App',
-            desktop: 'Desktop App',
-            api: 'API/Backend',
-            game: 'Game',
-            tool: 'Utility Tool'
-        };
-        return types[type] || type;
-    }
-
-    formatCategory(category) {
-        const categories = {
-            productivity: 'Productivity',
-            entertainment: 'Entertainment',
-            education: 'Education',
-            business: 'Business',
-            social: 'Social',
-            utility: 'Utility',
-            other: 'Other'
-        };
-        return categories[category] || category;
+                    <li><code>/function ${addonData.namespace}:main</code> - Load the addon</li>
+                    <li><code>/function ${addonData.namespace}:help</code> - Show help information</li>
+                </ul>
+                
+                <h4>Compatibility</h4>
+                <p>This addon is compatible with Minecraft Bedrock Edition ${addonData.version} and above.</p>
+                
+                <h4>Support</h4>
+                <p>If you encounter any issues, try:</p>
+                <ul>
+                    <li>Restarting Minecraft</li>
+                    <li>Checking that both behavior and resource packs are activated</li>
+                    <li>Ensuring "Holiday Creator Features" is enabled</li>
+                </ul>
+            </div>
+        `;
     }
 
     showOutputSection() {
         this.outputSection.style.display = 'block';
         this.outputSection.scrollIntoView({ behavior: 'smooth' });
-        this.outputSection.classList.add('success-animation');
-        setTimeout(() => this.outputSection.classList.remove('success-animation'), 600);
+    }
+
+    setLoadingState(loading) {
+        if (loading) {
+            this.generateBtn.disabled = true;
+            this.generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+        } else {
+            this.generateBtn.disabled = false;
+            this.generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate Addon';
+        }
     }
 
     switchTab(tabName) {
@@ -1059,110 +537,151 @@ requests==2.31.0`,
         document.getElementById(tabName).classList.add('active');
     }
 
-    setLoadingState(loading) {
-        if (loading) {
-            this.generateBtn.innerHTML = '<span class="loading"></span> Generating...';
-            this.generateBtn.disabled = true;
-        } else {
-            this.generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate App';
-            this.generateBtn.disabled = false;
-        }
-    }
-
-    downloadProject() {
-        if (!this.currentGeneratedApp) {
-            alert('No app generated yet. Please generate an app first.');
+    async downloadAddon() {
+        if (!this.currentGeneratedAddon) {
+            alert('No addon generated yet. Please generate an addon first.');
             return;
         }
 
-        // Create a zip file with the project structure
-        const zip = new JSZip();
-        
-        // Add files to zip
-        zip.file('README.md', `# ${this.currentGeneratedApp.name}\n\n${this.currentGeneratedApp.description}\n\n## Tech Stack\n${this.currentGeneratedApp.techStack.join(', ')}\n\n## Setup\nSee setup instructions in the project files.`);
-        zip.file('package.json', this.currentGeneratedApp.dependencies);
-        
-        if (this.currentGeneratedApp.type === 'web') {
-            zip.file('src/App.js', this.currentGeneratedApp.mainCode);
-            zip.file('public/index.html', this.generateHTMLTemplate());
-        }
+        try {
+            // Create a mock .mcpack file structure
+            const addonData = this.currentGeneratedAddon;
+            const zip = new JSZip();
 
-        // Generate and download zip
-        zip.generateAsync({type: 'blob'}).then(content => {
+            // Add behavior pack files
+            const behaviorPack = zip.folder('behavior_pack');
+            behaviorPack.file('manifest.json', this.behaviorCode.textContent);
+            
+            // Add resource pack files
+            const resourcePack = zip.folder('resource_pack');
+            resourcePack.file('manifest.json', this.resourceCode.textContent);
+
+            // Generate and download the zip file
+            const content = await zip.generateAsync({ type: 'blob' });
             const url = URL.createObjectURL(content);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${this.currentGeneratedApp.name.toLowerCase().replace(/\s+/g, '-')}.zip`;
+            a.download = `${addonData.name.replace(/[^a-z0-9]/gi, '_')}.mcpack`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-        });
+
+        } catch (error) {
+            console.error('Error downloading addon:', error);
+            alert('Error downloading addon. Please try again.');
+        }
     }
 
-    generateHTMLTemplate() {
-        return `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${this.currentGeneratedApp.name}</title>
-</head>
-<body>
-    <div id="root"></div>
-</body>
-</html>`;
-    }
-
-    previewApp() {
-        if (!this.currentGeneratedApp) {
-            alert('No app generated yet. Please generate an app first.');
+    previewAddon() {
+        if (!this.currentGeneratedAddon) {
+            alert('No addon generated yet. Please generate an addon first.');
             return;
         }
 
-        // Create a preview window with the generated code
-        const previewWindow = window.open('', '_blank');
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>${this.currentGeneratedApp.name} - Preview</title>
-                <style>
-                    body { font-family: Arial, sans-serif; padding: 20px; }
-                    .preview-header { background: #f0f0f0; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-                    .code-preview { background: #1a202c; color: white; padding: 20px; border-radius: 10px; overflow-x: auto; }
-                </style>
-            </head>
-            <body>
-                <div class="preview-header">
-                    <h1>${this.currentGeneratedApp.name}</h1>
-                    <p><strong>Type:</strong> ${this.formatAppType(this.currentGeneratedApp.type)}</p>
-                    <p><strong>Category:</strong> ${this.formatCategory(this.currentGeneratedApp.category)}</p>
-                    <p><strong>Description:</strong> ${this.currentGeneratedApp.description}</p>
+        // Create a preview modal
+        const modal = document.createElement('div');
+        modal.className = 'preview-modal';
+        modal.innerHTML = `
+            <div class="preview-content">
+                <h3>${this.currentGeneratedAddon.name} Preview</h3>
+                <div class="preview-grid">
+                    <div class="preview-item">
+                        <h4>Addon Type</h4>
+                        <p>${this.getAddonTypeDisplay(this.currentGeneratedAddon.type)}</p>
+                    </div>
+                    <div class="preview-item">
+                        <h4>Category</h4>
+                        <p>${this.getCategoryDisplay(this.currentGeneratedAddon.category)}</p>
+                    </div>
+                    <div class="preview-item">
+                        <h4>Features</h4>
+                        <p>${this.currentGeneratedAddon.features.join(', ')}</p>
+                    </div>
+                    <div class="preview-item">
+                        <h4>Minecraft Version</h4>
+                        <p>${this.currentGeneratedAddon.version}</p>
+                    </div>
                 </div>
-                <div class="code-preview">
-                    <h3>Generated Code Preview:</h3>
-                    <pre>${this.currentGeneratedApp.mainCode}</pre>
+                <div class="preview-description">
+                    <h4>Description</h4>
+                    <p>${this.currentGeneratedAddon.description}</p>
                 </div>
-            </body>
-            </html>
+                <button class="close-preview">Close Preview</button>
+            </div>
         `;
-        
-        previewWindow.document.write(htmlContent);
-        previewWindow.document.close();
+
+        // Add modal styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .preview-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            }
+            .preview-content {
+                background: white;
+                padding: 30px;
+                border-radius: 15px;
+                max-width: 600px;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            .preview-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                margin: 20px 0;
+            }
+            .preview-item h4 {
+                color: #667eea;
+                margin-bottom: 5px;
+            }
+            .preview-description {
+                margin: 20px 0;
+            }
+            .close-preview {
+                background: #667eea;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 8px;
+                cursor: pointer;
+                width: 100%;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Add close functionality
+        modal.querySelector('.close-preview').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+
+        // Close on outside click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
+
+        document.body.appendChild(modal);
     }
 
-    regenerateApp() {
-        this.generateApp();
+    regenerateAddon() {
+        if (this.currentGeneratedAddon) {
+            this.generateAddon();
+        }
     }
 }
 
-// Initialize the app generator when the page loads
+// Initialize the generator when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    new AppGenerator();
+    new MinecraftAddonGenerator();
 });
-
-// Add JSZip library for download functionality
-const script = document.createElement('script');
-script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-document.head.appendChild(script);

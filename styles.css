@@ -72,8 +72,8 @@ body {
 }
 
 /* Form elements */
-.app-type-selector,
-.tech-stack-selector,
+.addon-type-selector,
+.addon-features-selector,
 .description-input,
 .additional-options {
     margin-bottom: 25px;
@@ -107,15 +107,15 @@ textarea {
     min-height: 120px;
 }
 
-/* Tech stack options */
-.tech-options {
+/* Addon features options */
+.feature-options {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
     margin-top: 10px;
 }
 
-.tech-option {
+.feature-option {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -125,11 +125,11 @@ textarea {
     transition: background-color 0.3s ease;
 }
 
-.tech-option:hover {
+.feature-option:hover {
     background-color: #f7fafc;
 }
 
-.tech-option input[type="checkbox"] {
+.feature-option input[type="checkbox"] {
     width: auto;
     margin: 0;
 }
@@ -174,30 +174,30 @@ textarea {
     margin-bottom: 30px;
 }
 
-.app-preview {
+.addon-preview {
     background: #f8fafc;
     border-radius: 15px;
     padding: 30px;
 }
 
-.app-header {
+.addon-header {
     text-align: center;
     margin-bottom: 30px;
 }
 
-.app-header h3 {
+.addon-header h3 {
     font-size: 1.5rem;
     color: #2d3748;
     margin-bottom: 10px;
 }
 
-.app-meta {
+.addon-meta {
     display: flex;
     justify-content: center;
     gap: 15px;
 }
 
-.app-type, .app-category {
+.addon-type, .addon-category, .minecraft-version {
     background: #667eea;
     color: white;
     padding: 6px 12px;
