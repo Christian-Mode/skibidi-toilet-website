@@ -49,14 +49,7 @@ class MinecraftAddonGenerator {
         this.downloadBtn.addEventListener('click', () => this.downloadAddon());
         this.previewBtn.addEventListener('click', () => this.previewAddon());
         this.regenerateBtn.addEventListener('click', () => this.regenerateAddon());
-        const jjkBtn = document.getElementById('jjkPresetBtn');
-        if (jjkBtn) {
-            jjkBtn.addEventListener('click', () => this.applyJJKPreset());
-        }
-        const domainBtn = document.getElementById('domainPresetBtn');
-        if (domainBtn) {
-            domainBtn.addEventListener('click', () => this.applyDomainPreset());
-        }
+        // No preset buttons; only standard generation
 
         // Tab switching
         this.tabButtons.forEach(button => {
@@ -67,39 +60,7 @@ class MinecraftAddonGenerator {
         this.addonDescription.addEventListener('input', () => this.autoGenerateAddonName());
     }
 
-    applyJJKPreset() {
-        // Prefill for Jujutsu Kaisen: Gojo Hollow Purple ability
-        this.addonTypeSelect.value = 'ability';
-        this.addonName.value = 'Gojo Hollow Purple';
-        this.addonCategory.value = 'magic';
-        this.minecraftVersion.value = '1.20.50';
-        this.addonDescription.value = 'Create a Jujutsu Kaisen Hollow Purple ability: combines Cursed Technique Lapse: Blue and Cursed Technique Reversal: Red into Hollow Purple. Cast creates a fast-moving purple sphere that damages mobs on contact, applies knockback, spawns violet particle trail, creates a barrier effect (slow/freeze) in a radius, and plays a custom impact sound.';
-
-        // Ensure key features are checked
-        this.featureCheckboxes.forEach(cb => {
-            const enable = ['textures','sounds','particles','animations','commands','behavior'].includes(cb.value);
-            cb.checked = enable;
-        });
-
-        // Generate immediately
-        this.generateAddon();
-    }
-
-    applyDomainPreset() {
-        // JJK Domain Expansion: Unlimited Void (Gojo)
-        this.addonTypeSelect.value = 'ability';
-        this.addonName.value = 'Domain Expansion: Unlimited Void';
-        this.addonCategory.value = 'magic';
-        this.minecraftVersion.value = '1.20.50';
-        this.addonDescription.value = 'Create Gojo Satoru\'s Domain Expansion: Unlimited Void. On cast, create a large spherical barrier around the player with void-like shader/particles, slow/freeze entities inside, apply blindness and nausea, periodically deal true damage, and play an ethereal droning sound. Include entry burst (purple/blue), inner looping particles, and collapse effect with knockback.';
-
-        this.featureCheckboxes.forEach(cb => {
-            const enable = ['textures','sounds','particles','animations','commands','behavior'].includes(cb.value);
-            cb.checked = enable;
-        });
-
-        this.generateAddon();
-    }
+    // Removed JJK preset helpers
 
     autoGenerateAddonName() {
         const description = this.addonDescription.value;
