@@ -53,6 +53,10 @@ class MinecraftAddonGenerator {
         if (jjkBtn) {
             jjkBtn.addEventListener('click', () => this.applyJJKPreset());
         }
+        const domainBtn = document.getElementById('domainPresetBtn');
+        if (domainBtn) {
+            domainBtn.addEventListener('click', () => this.applyDomainPreset());
+        }
 
         // Tab switching
         this.tabButtons.forEach(button => {
@@ -78,6 +82,22 @@ class MinecraftAddonGenerator {
         });
 
         // Generate immediately
+        this.generateAddon();
+    }
+
+    applyDomainPreset() {
+        // JJK Domain Expansion: Unlimited Void (Gojo)
+        this.addonTypeSelect.value = 'ability';
+        this.addonName.value = 'Domain Expansion: Unlimited Void';
+        this.addonCategory.value = 'magic';
+        this.minecraftVersion.value = '1.20.50';
+        this.addonDescription.value = 'Create Gojo Satoru\'s Domain Expansion: Unlimited Void. On cast, create a large spherical barrier around the player with void-like shader/particles, slow/freeze entities inside, apply blindness and nausea, periodically deal true damage, and play an ethereal droning sound. Include entry burst (purple/blue), inner looping particles, and collapse effect with knockback.';
+
+        this.featureCheckboxes.forEach(cb => {
+            const enable = ['textures','sounds','particles','animations','commands','behavior'].includes(cb.value);
+            cb.checked = enable;
+        });
+
         this.generateAddon();
     }
 
