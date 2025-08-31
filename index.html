@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Minecraft Addon Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-cube"></i>
+                <h1>AI Minecraft Addon Generator</h1>
+            </div>
+            <p class="subtitle">Create custom Minecraft Bedrock Edition addons with AI-powered generation</p>
+        </header>
+
+        <main class="main-content">
+            <div class="generator-section">
+                <div class="input-section">
+                    <h2>Describe Your Minecraft Addon</h2>
+                    <div class="addon-type-selector">
+                        <label for="addonType">Addon Type:</label>
+                        <select id="addonType">
+                            <option value="item">Custom Item</option>
+                            <option value="mob">Custom Mob</option>
+                            <option value="block">Custom Block</option>
+                            <option value="ability">Ability/Spell</option>
+                            <option value="dimension">Custom Dimension</option>
+                            <option value="structure">Custom Structure</option>
+                            <option value="biome">Custom Biome</option>
+                            <option value="recipe">Custom Recipe</option>
+                            <option value="loot">Loot Table</option>
+                            <option value="function">Command Function</option>
+                        </select>
+                    </div>
+                    
+                    <div class="addon-features-selector">
+                        <label>Addon Features:</label>
+                        <div class="feature-options">
+                            <label class="feature-option">
+                                <input type="checkbox" value="textures" checked>
+                                <span>Custom Textures</span>
+                            </label>
+                            <label class="feature-option">
+                                <input type="checkbox" value="sounds" checked>
+                                <span>Custom Sounds</span>
+                            </label>
+                            <label class="feature-option">
+                                <input type="checkbox" value="particles" checked>
+                                <span>Particle Effects</span>
+                            </label>
+                            <label class="feature-option">
+                                <input type="checkbox" value="animations" checked>
+                                <span>Animations</span>
+                            </label>
+                            <label class="feature-option">
+                                <input type="checkbox" value="loot" checked>
+                                <span>Loot Drops</span>
+                            </label>
+                            <label class="feature-option">
+                                <input type="checkbox" value="crafting" checked>
+                                <span>Crafting Recipes</span>
+                            </label>
+                            <label class="feature-option">
+                                <input type="checkbox" value="behavior" checked>
+                                <span>AI Behavior</span>
+                            </label>
+                            <label class="feature-option">
+                                <input type="checkbox" value="commands" checked>
+                                <span>Commands</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="description-input">
+                        <label for="addonDescription">Addon Description:</label>
+                        <textarea 
+                            id="addonDescription" 
+                            placeholder="Describe your Minecraft addon in detail. Include what it does, how it looks, special abilities, rarity, and any specific mechanics..."
+                            rows="6"
+                        ></textarea>
+                    </div>
+
+                    <div class="additional-options">
+                        <label for="addonName">Addon Name:</label>
+                        <input type="text" id="addonName" placeholder="Enter your addon name">
+                        
+                        <label for="addonCategory">Category:</label>
+                        <select id="addonCategory">
+                            <option value="combat">Combat & Weapons</option>
+                            <option value="magic">Magic & Spells</option>
+                            <option value="technology">Technology & Redstone</option>
+                            <option value="nature">Nature & Farming</option>
+                            <option value="adventure">Adventure & Exploration</option>
+                            <option value="decoration">Decoration & Building</option>
+                            <option value="utility">Utility & Tools</option>
+                            <option value="other">Other</option>
+                        </select>
+
+                        <label for="minecraftVersion">Minecraft Version:</label>
+                        <select id="minecraftVersion">
+                            <option value="1.20.50">1.20.50+ (Latest)</option>
+                            <option value="1.20.0">1.20.0+</option>
+                            <option value="1.19.0">1.19.0+</option>
+                            <option value="1.18.0">1.18.0+</option>
+                        </select>
+                    </div>
+
+                    <button id="generateBtn" class="generate-btn">
+                        <i class="fas fa-magic"></i>
+                        Generate Addon
+                    </button>
+                </div>
+
+                <div class="output-section" id="outputSection" style="display: none;">
+                    <h2>Generated Minecraft Addon</h2>
+                    <div class="addon-preview">
+                        <div class="addon-header">
+                            <h3 id="generatedAddonName">Addon Name</h3>
+                            <div class="addon-meta">
+                                <span class="addon-type" id="generatedAddonType">Custom Item</span>
+                                <span class="addon-category" id="generatedAddonCategory">Combat</span>
+                                <span class="minecraft-version" id="generatedMinecraftVersion">1.20.50+</span>
+                            </div>
+                        </div>
+                        
+                        <div class="code-tabs">
+                            <div class="tab-buttons">
+                                <button class="tab-btn active" data-tab="structure">Project Structure</button>
+                                <button class="tab-btn" data-tab="behavior">Behavior Pack</button>
+                                <button class="tab-btn" data-tab="resource">Resource Pack</button>
+                                <button class="tab-btn" data-tab="functions">Functions</button>
+                                <button class="tab-btn" data-tab="instructions">Installation</button>
+                            </div>
+                            
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="structure">
+                                    <pre id="structureCode"></pre>
+                                </div>
+                                <div class="tab-pane" id="behavior">
+                                    <pre id="behaviorCode"></pre>
+                                </div>
+                                <div class="tab-pane" id="resource">
+                                    <pre id="resourceCode"></pre>
+                                </div>
+                                <div class="tab-pane" id="functions">
+                                    <pre id="functionsCode"></pre>
+                                </div>
+                                <div class="tab-pane" id="instructions">
+                                    <div id="instructionsContent"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button id="downloadBtn" class="action-btn download-btn">
+                                <i class="fas fa-download"></i>
+                                Download .mcpack
+                            </button>
+                            <button id="previewBtn" class="action-btn preview-btn">
+                                <i class="fas fa-eye"></i>
+                                Preview Assets
+                            </button>
+                            <button id="regenerateBtn" class="action-btn regenerate-btn">
+                                <i class="fas fa-redo"></i>
+                                Regenerate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="features-section">
+            <h2>What You Can Generate</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-sword"></i>
+                    <h3>Custom Items</h3>
+                    <p>Weapons, tools, armor, and magical items with unique abilities</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-dragon"></i>
+                    <h3>Custom Mobs</h3>
+                    <p>New creatures with AI behavior, animations, and loot drops</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-cube"></i>
+                    <h3>Custom Blocks</h3>
+                    <p>New blocks with textures, properties, and crafting recipes</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-magic"></i>
+                    <h3>Abilities & Spells</h3>
+                    <p>Magical abilities with particles, sounds, and effects</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-mountain"></i>
+                    <h3>Custom Dimensions</h3>
+                    <p>New worlds with unique biomes, structures, and mobs</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-castle"></i>
+                    <h3>Custom Structures</h3>
+                    <p>Buildings, dungeons, and landmarks with loot and mobs</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-tree"></i>
+                    <h3>Custom Biomes</h3>
+                    <p>New environments with unique blocks, mobs, and generation</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-tools"></i>
+                    <h3>Utility Tools</h3>
+                    <p>Commands, functions, and automation tools</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
